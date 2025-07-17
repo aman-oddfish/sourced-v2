@@ -1,24 +1,25 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { ToastProvider } from "@/components/ui/toast";
+import { hydrate } from "@/lib/root-data-hydrate";
 
 // Helper to fetch font settings from backend
 async function getFontSettings() {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/api/content`, { cache: 'no-store' });
-    if (!res.ok) return { fontUrl: '', fontFamily: '' };
-    const data = await res.json();
-    // Find the content item with id "google-font"
+    const data = await hydrate();
+    
     const fontFamily =
       data.general?.find((item: ContentItem) => item.id === "google-font")?.value ||
-      "Inter Tight"; // Default to Inter Tight if not set
-    console.log('Font family:', fontFamily);
+      "Inter Tight";
+    
     const fontUrl = fontFamily
       ? `https://fonts.googleapis.com/css2?family=${fontFamily.replace(/ /g, '+')}&display=swap`
       : '';
+    
     return { fontUrl, fontFamily };
-  } catch {
-    return { fontUrl: '', fontFamily: '' };
+  } catch (error) {
+    console.error('Error fetching font settings:', error);
+    return { fontUrl: '', fontFamily: 'Inter Tight' };
   }
 }
 
@@ -121,12 +122,10 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const { fontUrl, fontFamily } = await getFontSettings();
+
   return (
     <html lang="en">
       <head>
-        {/* Typekit fallback */}
-        {/* <link rel="stylesheet" href="https://use.typekit.net/bvm3wii.css" /> */}
-        {/* Dynamic Google Font */}
         {fontUrl && <link rel="stylesheet" href={fontUrl} />}
         <style>{`:root { --font-family: ${fontFamily ? `"${fontFamily}", sans-serif` : 'system-ui, sans-serif'}; }`}</style>
       </head>
