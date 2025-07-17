@@ -5,7 +5,7 @@ import { ToastProvider } from "@/components/ui/toast";
 // Helper to fetch font settings from backend
 async function getFontSettings() {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/api/siteSettings`, { cache: 'no-store' });
+    const res = await fetch(`${process.env.VERCEL_URL || 'http://localhost:3000'}/api/siteSettings`, { cache: 'no-store' });
     if (!res.ok) return { fontUrl: '', fontFamily: '' };
     const data = await res.json();
     const fontFamily = data.googleFont || data.customFontName || '';
