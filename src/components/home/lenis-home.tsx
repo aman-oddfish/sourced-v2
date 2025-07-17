@@ -19,7 +19,7 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { ArrowDownLeft, Share2Icon, Twitter, Facebook, Linkedin, Copy, HelpCircle, Headset, ChevronDown, ArrowUpRight } from "lucide-react";
 import { VelocityScroll } from '../magicui/scroll-based-velocity';
-import { creato_display, GarmondI } from '../../../fonts';
+// import { creato_display, GarmondI } from '../../../fonts';
 import { DarkHoverButton, InteractiveHoverButton } from '../magicui/interactive-hover-button';
 import { MorphingText } from '../magicui/morphing-text';
 import { Timeline } from '../ui/timeline';
@@ -231,7 +231,7 @@ export default function Home() {
           }}
         />
 
-        <main className={`bg-white text-black min-h-screen  ${creato_display.className}`} >
+        <main className={`bg-white text-black min-h-screen `} >
           <div className="max-w-screen mx-auto">
 
             {/* Shared Header with sticky behavior */}

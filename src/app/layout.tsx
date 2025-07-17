@@ -1,7 +1,25 @@
 import type { Metadata } from "next";
-// import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ToastProvider } from "@/components/ui/toast";
+
+// Helper to fetch font settings from backend
+async function getFontSettings() {
+  try {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/api/siteSettings`, { cache: 'no-store' });
+    if (!res.ok) return { fontUrl: '', fontFamily: '' };
+    const data = await res.json();
+    const fontFamily = data.googleFont || data.customFontName || '';
+    console.log('Font family:', fontFamily);
+    const fontUrl = fontFamily
+      ? `https://fonts.googleapis.com/css2?family=${encodeURIComponent(fontFamily.replace(/ /g, '+'))}&display=swap`
+      : '';
+    return { fontUrl, fontFamily };
+  } catch {
+    return { fontUrl: '', fontFamily: '' };
+  }
+}
+
+
 
 // const geistSans = Geist({
 //   variable: "--font-geist-sans",
@@ -94,19 +112,22 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const { fontUrl, fontFamily } = await getFontSettings();
   return (
     <html lang="en">
       <head>
-        <link rel="stylesheet" href="https://use.typekit.net/bvm3wii.css" />
+        {/* Typekit fallback */}
+        {/* <link rel="stylesheet" href="https://use.typekit.net/bvm3wii.css" /> */}
+        {/* Dynamic Google Font */}
+        {fontUrl && <link rel="stylesheet" href={fontUrl} />}
+        <style>{`:root { --font-family: ${fontFamily ? `"${fontFamily}", sans-serif` : 'system-ui, sans-serif'}; }`}</style>
       </head>
-      <body
-        className={`antialiased`}
-      >
+      <body className="antialiased">
         <ToastProvider>
           {children}
         </ToastProvider>
