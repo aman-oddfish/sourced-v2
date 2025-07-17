@@ -5,13 +5,16 @@ import { ToastProvider } from "@/components/ui/toast";
 // Helper to fetch font settings from backend
 async function getFontSettings() {
   try {
-    const res = await fetch(`${process.env.VERCEL_URL || 'http://localhost:3000'}/api/siteSettings`, { cache: 'no-store' });
+    const res = await fetch(`${process.env. || 'http://localhost:3000'}/api/content`, { cache: 'no-store' });
     if (!res.ok) return { fontUrl: '', fontFamily: '' };
     const data = await res.json();
-    const fontFamily = data.googleFont || data.customFontName || '';
+    // Find the content item with id "google-font"
+    const fontFamily =
+      data.general?.find((item: ContentItem) => item.id === "google-font")?.value ||
+      "Inter Tight"; // Default to Inter Tight if not set
     console.log('Font family:', fontFamily);
     const fontUrl = fontFamily
-      ? `https://fonts.googleapis.com/css2?family=${encodeURIComponent(fontFamily.replace(/ /g, '+'))}&display=swap`
+      ? `https://fonts.googleapis.com/css2?family=${fontFamily.replace(/ /g, '+')}&display=swap`
       : '';
     return { fontUrl, fontFamily };
   } catch {
